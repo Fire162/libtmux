@@ -59,6 +59,11 @@ it.
 
 ### Development
 
+#### Local Node.js selection
+
+The development checkout no longer selects a Node.js version through
+`.nvmrc`. The optional Markdown formatter uses your installed Prettier.
+
 #### CI actions updated to current majors
 
 Workflow actions moved to their current major releases: `actions/checkout` v7,
