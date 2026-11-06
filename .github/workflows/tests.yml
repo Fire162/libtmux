@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.15']
-        tmux-version: ['3.2a', '3.3a', '3.4', '3.5', '3.6', '3.7a', '3.7b', 'master']
+        tmux-version: ['3.2a', '3.3a', '3.4', '3.5', '3.6', '3.7a', '3.7b', '3.8', 'master']
     steps:
       - uses: actions/checkout@v7
 
@@ -36,12 +36,16 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras --dev
 
+      - name: Identify tmux build environment
+        id: tmux-build-environment
+        run: printf 'image=%s-%s\n' "${ImageOS:?}" "${ImageVersion:?}" >> "$GITHUB_OUTPUT"
+
       - name: Setup tmux build cache for tmux ${{ matrix.tmux-version }}
         id: tmux-build-cache
         uses: actions/cache@v6
         with:
           path: ~/tmux-builds/tmux-${{ matrix.tmux-version }}
-          key: tmux-${{ matrix.tmux-version }}
+          key: tmux-${{ steps.tmux-build-environment.outputs.image }}-${{ runner.arch }}-${{ matrix.tmux-version }}
 
       - name: Build tmux ${{ matrix.tmux-version }}
         if: steps.tmux-build-cache.outputs.cache-hit != 'true'
