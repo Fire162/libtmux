@@ -59,6 +59,13 @@ it.
 
 ### Development
 
+#### Native tmux caches survive runner upgrades
+
+CI validates restored tmux executables and rebuilds invalid entries in a
+fresh directory. Cache keys include the runner image, toolchain, source,
+and build recipe. Stable versions use verified release archives, and
+compilation uses up to four available processors.
+
 #### CI actions updated to current majors
 
 Workflow actions moved to their current major releases: `actions/checkout` v7,
