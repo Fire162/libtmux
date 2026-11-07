@@ -182,6 +182,11 @@ windows.
 
 ### Fixes
 
+#### `Pane.send_keys()` passes `--` before keys (#838)
+
+{meth}`Pane.send_keys() <libtmux.Pane.send_keys>` now passes `--` before keys,
+preventing text that begins with `-` from being parsed as tmux flags.
+
 #### Linked windows resolve to the session tmux would use (#713)
 
 A window can be linked into several sessions at once, and libtmux used to pick

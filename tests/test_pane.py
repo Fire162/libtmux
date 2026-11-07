@@ -500,6 +500,22 @@ SEND_KEYS_CASES: list[SendKeysCase] = [
         not_expected_in_capture=None,
         min_tmux_version="3.4",
     ),
+    SendKeysCase(
+        test_id="dash_prefix_literal",
+        key="-n hello",
+        kwargs={"literal": True, "enter": False},
+        expected_in_capture="-n hello",
+        not_expected_in_capture=None,
+        min_tmux_version=None,
+    ),
+    SendKeysCase(
+        test_id="dash_prefix_non_literal",
+        key="-n hello",
+        kwargs={"enter": False},
+        expected_in_capture="-n hello",
+        not_expected_in_capture=None,
+        min_tmux_version=None,
+    ),
 ]
 
 
@@ -597,6 +613,29 @@ def test_send_keys_flag_only_repeat_emits_dash_N(
 
     send_keys_calls = [c for c in captured if c[0] == "send-keys"]
     assert send_keys_calls == [("send-keys", "-R", "-N", "3")]
+
+
+def test_send_keys_dash_prefix_emits_double_dash(
+    monkeypatch: pytest.MonkeyPatch,
+    session: Session,
+) -> None:
+    """send_keys passes '--' before keys so leading dashes are not flags."""
+    pane = session.active_window.active_pane
+    assert pane is not None
+
+    captured: list[tuple[str, ...]] = []
+    real_cmd = pane.cmd
+
+    def fake_cmd(cmd_name: str, *args: t.Any, **kw: t.Any) -> t.Any:
+        captured.append((cmd_name, *(str(a) for a in args)))
+        return real_cmd(cmd_name, *args, **kw)
+
+    monkeypatch.setattr(pane, "cmd", fake_cmd)
+
+    pane.send_keys("-n hello", enter=False)
+
+    send_keys_calls = [c for c in captured if c[0] == "send-keys"]
+    assert send_keys_calls == [("send-keys", "--", "-n hello")]
 
 
 def test_send_keys_flag_only_requires_a_flag(session: Session) -> None:
