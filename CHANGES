@@ -63,8 +63,9 @@ it.
 
 CI validates restored tmux executables and rebuilds invalid entries in a
 fresh directory. Cache keys include the runner image, toolchain, source,
-and build recipe. Stable versions use verified release archives, and
-compilation uses up to four available processors.
+and build recipe. Stable versions use verified release archives with pins
+in `.github/tmux-releases.toml`, including tmux 3.8. Compilation uses up to
+four available processors.
 
 #### CI actions updated to current majors
 
